@@ -1,0 +1,4 @@
+- [ ] Step 1: Edit src/hooks/useNotes.ts (fix load/save effects)
+- [ ] Step 2: Edit src/App.tsx (fix filter syntax, TS type, complete JSX)
+- [ ] Step 3: Test with npm run dev
+- [ ] Step 4: attempt_completion

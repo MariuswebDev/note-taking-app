@@ -1,26 +1,29 @@
-import { useEffect, useState } from "react";
-import type { Note, InputNote, StoredData } from "../types";
+import { useEffect, useMemo, useState } from "react";
+import type { InputNote, Note, StoredData } from "../types";
 
-const useNotes = () => {
-  const [notes, setNotes] = useState<Note[]>([]);
-  useEffect(() => {
-    const saved = localStorage.getItem("notes");
-    if (saved) {
-      const parsed: StoredData[] = JSON.parse(saved);
-      const notes = parsed.map((note) => ({
+export const useNotes = () => {
+  const [notes, setNotes] = useState<Note[]>(() => {
+    // localStorage
+    const saved = localStorage.getItem("notesData");
+    try {
+      if (!saved) return [];
+      const notesData: StoredData[] = JSON.parse(saved);
+      return notesData.map((note) => ({
         ...note,
         createdAt: new Date(note.createdAt),
         updatedAt: new Date(note.updatedAt),
       }));
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setNotes(notes);
+    } catch {
+      return [];
     }
-  }, []);
+  });
 
+  //save to localStorage on update...
   useEffect(() => {
-    localStorage.setItem("notes", JSON.stringify("notes"));
+    localStorage.setItem("notesData", JSON.stringify(notes));
   }, [notes]);
 
+  //add note
   const addNote = (input: InputNote) => {
     const newNote: Note = {
       ...input,
@@ -28,46 +31,48 @@ const useNotes = () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    setNotes([...notes, newNote]);
+    setNotes((prev) => [...prev, newNote]);
     return newNote;
   };
 
+  //update note
   const updateNote = (id: string, input: InputNote) => {
-    setNotes(
-      notes.map((note) =>
+    setNotes((prev) =>
+      prev.map((note) =>
         note.id === id ? { ...note, ...input, updatedAt: new Date() } : note,
       ),
     );
   };
 
+  //delete todo...
   const deleteNote = (id: string) => {
-    setNotes(notes.filter((note) => note.id !== id));
+    setNotes((prev) => prev.filter((note) => note.id !== id));
   };
 
-  const getNotes = (id: string) => {
+  //get Note...
+  const getNote = (id: string) => {
     return notes.find((note) => note.id === id);
   };
 
-  const getAllTags = (): string[] => {
+  //get all tags...
+  const getAllTags = useMemo(() => {
     const tagSet = new Set<string>();
-    notes.forEach((note) => {
-      note.tags.forEach((tag) => tagSet.add(tag));
-    });
+    notes.forEach((note) => note.tags.forEach((tag) => tagSet.add(tag)));
     return Array.from(tagSet).sort();
+  }, [notes]);
+
+  //get Notes by tags...
+  const getNotesByTags = (tag: string) => {
+    return notes.filter((note) => note.tags.includes(tag));
   };
 
-  const getNotesByTags = (tag: string) => {
-    notes.filter((note) => note.tags.includes(tag));
-  };
   return {
     notes,
     addNote,
     updateNote,
     deleteNote,
-    getNotes,
+    getNote,
     getAllTags,
     getNotesByTags,
   };
 };
-
-export default useNotes;
