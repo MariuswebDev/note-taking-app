@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNotes } from "./hooks/useNotes";
+import { NoteList } from "./components/NoteList";
 
 const App = () => {
   const { notes, addNote, updateNote, deleteNote, getNote, getAllTags } =
@@ -30,7 +31,7 @@ const App = () => {
   };
 
   //handle selected id
-  const handleSelectedId = (id: string) => {
+  const handleSelectNote = (id: string) => {
     setSelectedNoteId(id);
   };
 
@@ -50,7 +51,10 @@ const App = () => {
         {/* Header */}
         <div className="flex justify-between items-center mb-3">
           <h6 className="font-bold text-lg">Notes</h6>
-          <button className="bg-blue-600 text-white px-4 py-1 rounded cursor-pointer hover:bg-blue-700 transition">
+          <button
+            onClick={handleCreateNew}
+            className="bg-blue-600 text-white px-4 py-1 rounded cursor-pointer hover:bg-blue-700 transition"
+          >
             + New
           </button>
         </div>
@@ -59,6 +63,8 @@ const App = () => {
           <input
             type="text"
             placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="border border-gray-300 rounded-lg px-2 py-2 outline-none w-full focus:ring-2 focus:ring-blue-600 transition"
           />
         </div>
@@ -94,6 +100,15 @@ const App = () => {
         </div>
 
         {/* Note List */}
+        <div className="overflow-y-auto">
+          <NoteList
+            notes={filteredNotes}
+            selectedId={selectedNoteId}
+            onSelectNote={handleSelectNote}
+            onDeleteNote={deleteNote}
+          />
+        </div>
+
         {/* Note Editor */}
       </div>
     </div>
