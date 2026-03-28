@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNotes } from "./hooks/useNotes";
-import { NoteList } from "./components/NoteList";
+import NoteList from "./components/NoteList";
+import { NoteEditor } from "./components/NoteEditor";
 
 const App = () => {
   const { notes, addNote, updateNote, deleteNote, getNote, getAllTags } =
@@ -45,62 +46,67 @@ const App = () => {
 
   //Display UI
   return (
-    <div className="flex bg-gray-50">
-      {/* Side Bar */}
-      <div className="flex flex-col w-80 p-4 divide-gray-300">
+    <div className="h-screen flex bg-gray-50">
+      {/* Sidebar */}
+      <div className="w-80 border-r border-gray-200 bg-white flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex justify-between items-center mb-3">
-          <h6 className="font-bold text-lg">Notes</h6>
+        <div className="border-b border-gray-200 p-4 flex justify-between items-center">
+          <h1 className="text-xl font-bold text-gray-900">Notes</h1>
           <button
             onClick={handleCreateNew}
-            className="bg-blue-600 text-white px-4 py-1 rounded cursor-pointer hover:bg-blue-700 transition"
+            className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition"
           >
             + New
           </button>
         </div>
+
         {/* Search */}
-        <div className="mb-3">
+        <div className="p-4 border-b border-gray-200">
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search notes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="border border-gray-300 rounded-lg px-2 py-2 outline-none w-full focus:ring-2 focus:ring-blue-600 transition"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        {/* Tags Section */}
-        {allTags.length > 0 &&
-          allTags.map((tag) => (
-            <div>
-              <h6 className="font-semibold text-xs">Tags</h6>
-              <div className="flex flex-wrap">
+
+        {/* Tags section */}
+        {allTags.length > 0 && (
+          <div className="border-b border-gray-200 p-4">
+            <h6 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+              Tags
+            </h6>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {allTags.map((tag) => (
                 <button
+                  key={tag}
                   onClick={() =>
                     setSelectedTag(selectedTag === tag ? null : tag)
                   }
-                  className={`px-2 py-1 ronuded-md font-medium transition ${
+                  className={`px-3 py-1 text-sm font-medium rounded transition ${
                     selectedTag === tag
-                      ? "text-white bg-gray-50"
+                      ? "bg-blue-600 text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   #{tag}
                 </button>
-              </div>
+              ))}
             </div>
-          ))}
-        {/* Clear Section */}
-        <div>
-          <button
-            className="bg-gray-100 rounded px-2 py-1 text-gray-500 hover:bg-gray-200 hover:text-gray-400 transition cursor-pointer"
-            onClick={handleClearFilter}
-          >
-            Clear Filter
-          </button>
-        </div>
+            {selectedTag && (
+              <button
+                onClick={handleClearFilter}
+                className="text-sm text-gray-500 hover:text-gray-700 transition"
+              >
+                Clear filter
+              </button>
+            )}
+          </div>
+        )}
 
-        {/* Note List */}
-        <div className="overflow-y-auto">
+        {/* Notes List */}
+        <div className="flex-1 overflow-y-auto">
           <NoteList
             notes={filteredNotes}
             selectedId={selectedNoteId}
@@ -108,10 +114,18 @@ const App = () => {
             onDeleteNote={deleteNote}
           />
         </div>
+      </div>
 
-        {/* Note Editor */}
+      {/* Editor */}
+      <div className="flex-1 overflow-y-auto">
+        {selectedNote ? (
+          <NoteEditor note={selectedNote} onUpdate={updateNote} />
+        ) : (
+          <NoteEditor note={null} onSave={addNote} />
+        )}
       </div>
     </div>
   );
 };
+
 export default App;
