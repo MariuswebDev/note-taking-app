@@ -54,7 +54,7 @@ const App = () => {
           <h1 className="text-xl font-bold text-gray-900">Notes</h1>
           <button
             onClick={handleCreateNew}
-            className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition"
+            className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded cursor-pointer hover:bg-blue-700 transition"
           >
             + New
           </button>
@@ -84,7 +84,7 @@ const App = () => {
                   onClick={() =>
                     setSelectedTag(selectedTag === tag ? null : tag)
                   }
-                  className={`px-3 py-1 text-sm font-medium rounded transition ${
+                  className={`px-3 py-1 text-sm font-medium cursor-pointer rounded-full transition ${
                     selectedTag === tag
                       ? "bg-blue-600 text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -97,7 +97,7 @@ const App = () => {
             {selectedTag && (
               <button
                 onClick={handleClearFilter}
-                className="text-sm text-gray-500 hover:text-gray-700 transition"
+                className="text-sm mt-3 bg-gray-100 text-gray-500 hover:text-gray-700  font-medium rounded-md px-2 py-1 cursor-pointer hover:bg-gray-200 transition"
               >
                 Clear filter
               </button>
